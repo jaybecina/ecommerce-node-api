@@ -1,4 +1,5 @@
 import express, { json, urlencoded, Request } from "express";
+import cors from "cors";
 import routes from "./routes";
 
 import serverless from "serverless-http";
