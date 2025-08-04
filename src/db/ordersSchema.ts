@@ -1,36 +1,27 @@
-import {
-  doublePrecision,
-  integer,
-  pgTable,
-  timestamp,
-  varchar,
-} from 'drizzle-orm/pg-core';
-import { usersTable } from './usersSchema.js';
-import { productsTable } from './productsSchema.js';
+import { doublePrecision, pgTable, timestamp, varchar, uuid, integer } from 'drizzle-orm/pg-core';
+import { usersTable } from './usersSchema';
+import { productsTable } from './productsSchema';
 import { createInsertSchema } from 'drizzle-zod';
 import { z } from 'zod';
 
 export const ordersTable = pgTable('orders', {
-  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  id: uuid().primaryKey().defaultRandom(),
   createdAt: timestamp().notNull().defaultNow(),
   status: varchar({ length: 50 }).notNull().default('New'),
-
-  userId: integer()
+  userId: uuid()
     .references(() => usersTable.id)
     .notNull(),
-
   stripePaymentIntentId: varchar({ length: 255 }),
 });
 
 export const orderItemsTable = pgTable('order_items', {
-  id: integer().primaryKey().generatedAlwaysAsIdentity(),
-  orderId: integer()
+  id: uuid().primaryKey().defaultRandom(),
+  orderId: uuid()
     .references(() => ordersTable.id)
     .notNull(),
-  productId: integer()
+  productId: uuid()
     .references(() => productsTable.id)
     .notNull(),
-
   quantity: integer().notNull(),
   price: doublePrecision().notNull(),
 });

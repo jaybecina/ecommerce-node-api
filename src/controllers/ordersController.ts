@@ -1,16 +1,16 @@
-import { Request, Response } from "express";
-import { db } from "../db/index";
-import { orderItemsTable, ordersTable } from "../db/ordersSchema";
-import { eq } from "drizzle-orm";
+import { Request, Response } from 'express';
+import { db } from '../db/index';
+import { orderItemsTable, ordersTable } from '../db/ordersSchema';
+import { eq } from 'drizzle-orm';
 
 export async function createOrder(req: Request, res: Response) {
   try {
-    const { order, items } = req.cleanBody;
+    const { items } = req.cleanBody;
 
     const userId = req.userId;
     console.log(userId);
     if (!userId) {
-      res.status(400).json({ message: "Invalid order data" });
+      res.status(400).json({ message: 'Invalid order data' });
     }
 
     const [newOrder] = await db
@@ -24,15 +24,12 @@ export async function createOrder(req: Request, res: Response) {
       ...item,
       orderId: newOrder.id,
     }));
-    const newOrderItems = await db
-      .insert(orderItemsTable)
-      .values(orderItems)
-      .returning();
+    const newOrderItems = await db.insert(orderItemsTable).values(orderItems).returning();
 
     res.status(201).json({ ...newOrder, items: newOrderItems });
   } catch (e) {
     console.log(e);
-    res.status(400).json({ message: "Invalid order data" });
+    res.status(400).json({ message: 'Invalid order data' });
   }
 }
 
@@ -50,7 +47,7 @@ export async function listOrders(req: Request, res: Response) {
 
 export async function getOrder(req: Request, res: Response) {
   try {
-    const id = parseInt(req.params.id);
+    const id = req.params.id;
 
     // TODO: required to setup the relationship
     // const result = await db.query.ordersTable.findFirst({
@@ -67,7 +64,8 @@ export async function getOrder(req: Request, res: Response) {
       .leftJoin(orderItemsTable, eq(ordersTable.id, orderItemsTable.orderId));
 
     if (orderWithItems.length === 0) {
-      res.status(404).send("Order not found");
+      res.status(404).send('Order not found');
+      return;
     }
 
     const mergedOrder = {
@@ -84,7 +82,7 @@ export async function getOrder(req: Request, res: Response) {
 
 export async function updateOrder(req: Request, res: Response) {
   try {
-    const id = parseInt(req.params.id);
+    const id = req.params.id;
 
     const [updatedOrder] = await db
       .update(ordersTable)
@@ -93,7 +91,7 @@ export async function updateOrder(req: Request, res: Response) {
       .returning();
 
     if (!updatedOrder) {
-      res.status(404).send("Order not found");
+      res.status(404).send('Order not found');
     } else {
       res.status(200).json(updatedOrder);
     }
