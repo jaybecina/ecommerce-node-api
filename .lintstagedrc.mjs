@@ -12,3 +12,4 @@ export default {
   'src/**/*.{js,jsx,ts,tsx,json,md,prettierrc,css,scss}': ['prettier --write --config .prettierrc'],
   'src/**/*.{js,jsx,ts,tsx}': [buildEslintCommand],
 };
+åå;
