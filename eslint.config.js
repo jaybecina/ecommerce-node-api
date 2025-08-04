@@ -1,4 +1,5 @@
 // eslint.config.js
+
 import js from '@eslint/js';
 import tseslint from '@typescript-eslint/eslint-plugin';
 import tsparser from '@typescript-eslint/parser';
@@ -35,7 +36,14 @@ export default [
     },
   },
   {
-    files: ['*.config.js', 'eslint.config.js', '.eslintrc.js', '.lintstagedrc.js'],
+    files: [
+      '*.config.js',
+      'eslint.config.js',
+      '.eslintrc.js',
+      '.lintstagedrc.js',
+      '*.config.mjs',
+      '.lintstagedrc.mjs',
+    ],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'script',
