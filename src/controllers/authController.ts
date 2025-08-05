@@ -24,8 +24,11 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
     res.status(201).json({ user, token });
     return;
-  } catch {
-    res.status(500).send('Something went wrong');
+  } catch (error) {
+    console.error('Registration error:', error);
+    res.status(500).json({
+      error: error instanceof Error ? error.message : 'Something went wrong',
+    });
     return;
   }
 };

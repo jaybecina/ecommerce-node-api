@@ -1,10 +1,11 @@
+import 'dotenv/config';
 import express, { json, urlencoded, Request } from 'express';
 import cors from 'cors';
 import routes from './routes';
 
 import serverless from 'serverless-http';
 
-const port = 5000;
+const port = process.env.PORT || 5000;
 const app = express();
 
 app.use(cors());
@@ -24,9 +25,9 @@ app.get('/', (req, res) => {
 // Routes
 app.use('/api', routes);
 
-if (process.env.NODE_ENV === 'dev') {
+if (process.env.NODE_ENV === 'development') {
   app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`);
+    console.log(`Server listening on port ${port}`);
   });
 }
 
