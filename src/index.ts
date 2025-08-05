@@ -1,5 +1,6 @@
 import 'dotenv/config';
-import express, { json, urlencoded, Request } from 'express';
+import { Buffer } from 'buffer';
+import express, { json, urlencoded, Request, Response } from 'express';
 import cors from 'cors';
 import routes from './routes';
 
@@ -12,7 +13,7 @@ app.use(cors());
 app.use(urlencoded({ extended: false }));
 app.use(
   json({
-    verify: (req: Request, res, buf) => {
+    verify: (req: Request, res: Response, buf: Buffer) => {
       req.rawBody = buf;
     },
   }),

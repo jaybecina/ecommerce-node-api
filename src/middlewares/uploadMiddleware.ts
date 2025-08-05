@@ -1,3 +1,5 @@
+import { Request, Response, NextFunction } from 'express';
+import { FileFilterCallback } from 'multer';
 import multer from 'multer';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { s3Client, r2Config } from '../config/r2.config';
@@ -13,7 +15,7 @@ const upload = multer({
   limits: {
     fileSize: MAX_FILE_SIZE,
   },
-  fileFilter: (req, file, cb) => {
+  fileFilter: (req: Request, file: Express.Multer.File, cb: FileFilterCallback) => {
     if (!ALLOWED_MIME_TYPES.includes(file.mimetype)) {
       cb(new Error('Invalid file type. Only JPEG, PNG and WebP are allowed'));
       return;
@@ -23,7 +25,7 @@ const upload = multer({
 });
 
 // Middleware to handle file upload to R2
-export const uploadToR2: RequestHandler = (req, res, next) => {
+export const uploadToR2: RequestHandler = (req: Request, res: Response, next: NextFunction) => {
   if (!req.file) {
     res.status(400).json({ message: 'No file uploaded' });
     return;
