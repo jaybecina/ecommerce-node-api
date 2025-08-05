@@ -1,18 +1,20 @@
-import { pgTable, varchar, text, uuid } from 'drizzle-orm/pg-core';
+import { pgTable, varchar, text, uuid, pgEnum } from 'drizzle-orm/pg-core';
 import { createInsertSchema } from 'drizzle-zod';
+
+// Create role enum
+export const roleEnum = pgEnum('role', ['user', 'seller', 'admin']);
 
 export const usersTable = pgTable('users', {
   id: uuid().primaryKey().defaultRandom(),
   email: varchar({ length: 255 }).notNull().unique(),
   password: varchar({ length: 255 }).notNull(),
-  role: varchar({ length: 255 }).notNull().default('user'),
+  role: roleEnum('role').notNull().default('user'),
   name: varchar({ length: 255 }),
   address: text(),
 });
 
 export const createUserSchema = createInsertSchema(usersTable).omit({
   id: true,
-  role: true,
 });
 
 export const loginSchema = createInsertSchema(usersTable).pick({

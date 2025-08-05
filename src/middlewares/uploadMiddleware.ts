@@ -1,41 +1,59 @@
 import multer from 'multer';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { s3Client, r2Config } from '../config/r2.config';
-import { Request, Response, NextFunction } from 'express';
+import { RequestHandler } from 'express';
+
+// Allowed file types
+const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 // Configure multer for memory storage
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB limit
+    fileSize: MAX_FILE_SIZE,
+  },
+  fileFilter: (req, file, cb) => {
+    if (!ALLOWED_MIME_TYPES.includes(file.mimetype)) {
+      cb(new Error('Invalid file type. Only JPEG, PNG and WebP are allowed'));
+      return;
+    }
+    cb(null, true);
   },
 });
 
 // Middleware to handle file upload to R2
-export const uploadToR2 = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    if (!req.file) {
-      return next();
-    }
-
-    const fileBuffer = req.file.buffer;
-    const fileName = `${Date.now()}-${req.file.originalname}`;
-
-    const uploadParams = {
-      Bucket: r2Config.bucketName,
-      Key: fileName,
-      Body: fileBuffer,
-      ContentType: req.file.mimetype,
-    };
-
-    await s3Client.send(new PutObjectCommand(uploadParams));
-
-    // Add the image URL to the request body
-    req.body.imageUrl = `https://${r2Config.bucketName}.${r2Config.accountId}.r2.cloudflarestorage.com/${fileName}`;
-    next();
-  } catch (error) {
-    next(error);
+export const uploadToR2: RequestHandler = (req, res, next) => {
+  if (!req.file) {
+    res.status(400).json({ message: 'No file uploaded' });
+    return;
   }
+
+  // Generate a unique filename with proper extension
+  const fileExtension = req.file.originalname.split('.').pop();
+  const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 15)}.${fileExtension}`;
+
+  const uploadParams = {
+    Bucket: r2Config.bucketName,
+    Key: `products/${fileName}`,
+    Body: req.file.buffer,
+    ContentType: req.file.mimetype,
+    CacheControl: 'public, max-age=31536000',
+  };
+
+  s3Client
+    .send(new PutObjectCommand(uploadParams))
+    .then(() => {
+      req.body.imageUrl = `${r2Config.publicUrl}/products/${fileName}`;
+      next();
+    })
+    .catch((error) => {
+      console.error('Error uploading to R2:', error);
+      res.status(500).json({
+        message: 'Error uploading file',
+        error: error instanceof Error ? error.message : 'Unknown error',
+      });
+    });
 };
 
 // Export multer middleware configured for single file upload
