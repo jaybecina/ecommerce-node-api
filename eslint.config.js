@@ -33,6 +33,7 @@ export default [
       'no-console': 'off',
       'no-undef': 'off',
       'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-explicit-any': 'error',
     },
   },
   {
@@ -46,7 +47,7 @@ export default [
     ],
     languageOptions: {
       ecmaVersion: 'latest',
-      sourceType: 'script',
+      sourceType: 'module',
       globals: {
         require: 'readonly',
         module: 'readonly',

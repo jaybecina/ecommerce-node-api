@@ -7,10 +7,12 @@ export const uploadProductImage: RequestHandler = (req, res) => {
       imageUrl: req.body.imageUrl,
       message: 'Image uploaded successfully',
     });
+    return;
   } else {
     res.status(400).json({
       success: false,
       message: 'No image was uploaded',
     });
+    return;
   }
 };

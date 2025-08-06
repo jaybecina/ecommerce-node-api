@@ -5,12 +5,13 @@ import { eq } from 'drizzle-orm';
 
 export async function createOrder(req: Request, res: Response) {
   try {
-    const { items } = req.cleanBody;
+    const { items } = req.cleanBody as { items: OrderItem[] };
 
     const userId = req.userId;
     console.log(userId);
     if (!userId) {
       res.status(400).json({ message: 'Invalid order data' });
+      return;
     }
 
     const [newOrder] = await db
@@ -20,16 +21,23 @@ export async function createOrder(req: Request, res: Response) {
       .returning();
 
     // TODO: validate products ids, and take their actual price from db
-    const orderItems = items.map((item: any) => ({
+    interface OrderItem {
+      productId: string;
+      quantity: number;
+      price: number;
+    }
+    const orderItems = items.map((item: OrderItem) => ({
       ...item,
       orderId: newOrder.id,
     }));
     const newOrderItems = await db.insert(orderItemsTable).values(orderItems).returning();
 
     res.status(201).json({ ...newOrder, items: newOrderItems });
+    return;
   } catch (e) {
     console.log(e);
     res.status(400).json({ message: 'Invalid order data' });
+    return;
   }
 }
 
@@ -40,8 +48,10 @@ export async function listOrders(req: Request, res: Response) {
   try {
     const orders = await db.select().from(ordersTable);
     res.json(orders);
+    return;
   } catch (error) {
     res.status(500).send(error);
+    return;
   }
 }
 
