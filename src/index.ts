@@ -26,10 +26,8 @@ app.get('/', (req: Request, res: Response) => {
 // Routes
 app.use('/api', routes);
 
-if (process.env.NODE_ENV === 'development') {
-  app.listen(port, () => {
-    console.log(`Server listening on port ${port}`);
-  });
-}
+app.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
+});
 
 export const handler = serverless(app);
