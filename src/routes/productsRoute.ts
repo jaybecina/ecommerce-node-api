@@ -5,13 +5,13 @@ import {
   createProduct,
   updateProduct,
   deleteProduct,
-} from '../controllers/productsController';
-import { uploadProductImage } from '../controllers/imageUploadController';
-import { validateData } from '../middlewares/validationMiddleware';
-import { uploadMiddleware, uploadToR2 } from '../middlewares/uploadMiddleware';
-import { createProductSchema, updateProductSchema } from '../db/productsSchema';
-import { verifySellerOrAdmin, verifyToken } from '../middlewares/authMiddleware';
-import { apiLimiter } from '../middlewares/rateLimiter';
+} from '../controllers/productsController.js';
+import { uploadProductImage } from '../controllers/imageUploadController.js';
+import { validateData } from '../middlewares/validationMiddleware.js';
+import { uploadMiddleware, uploadToR2 } from '../middlewares/uploadMiddleware.js';
+import { createProductSchema, updateProductSchema } from '../db/productsSchema.js';
+import { verifySellerOrAdmin, verifyToken } from '../middlewares/authMiddleware.js';
+import { apiLimiter } from '../middlewares/rateLimiter.js';
 
 const router = Router();
 

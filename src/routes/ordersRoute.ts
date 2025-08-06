@@ -1,10 +1,10 @@
 // Orders routes
 import { Router } from 'express';
-import { verifyToken } from '../middlewares/authMiddleware';
-import { validateData } from '../middlewares/validationMiddleware';
-import { insertOrderWithItemsSchema, updateOrderSchema } from '../db/ordersSchema';
-import { createOrder, listOrders, getOrder, updateOrder } from '../controllers/ordersController';
-import { apiLimiter } from '../middlewares/rateLimiter';
+import { verifyToken } from '../middlewares/authMiddleware.js';
+import { validateData } from '../middlewares/validationMiddleware.js';
+import { insertOrderWithItemsSchema, updateOrderSchema } from '../db/ordersSchema.js';
+import { createOrder, listOrders, getOrder, updateOrder } from '../controllers/ordersController.js';
+import { apiLimiter } from '../middlewares/rateLimiter.js';
 
 const router = Router();
 

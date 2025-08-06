@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { FileFilterCallback } from 'multer';
 import multer from 'multer';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
-import { s3Client, r2Config } from '../config/r2.config';
+import { s3Client, r2Config } from '../config/r2.config.js';
 import { RequestHandler } from 'express';
 
 // Allowed file types

@@ -2,7 +2,7 @@ import 'dotenv/config';
 import { Buffer } from 'buffer';
 import express, { json, urlencoded, Request, Response } from 'express';
 import cors from 'cors';
-import routes from './routes/index';
+import routes from './routes/index.js';
 
 import serverless from 'serverless-http';
 

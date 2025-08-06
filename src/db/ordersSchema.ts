@@ -1,6 +1,6 @@
 import { doublePrecision, pgTable, timestamp, varchar, uuid, integer } from 'drizzle-orm/pg-core';
-import { usersTable } from './usersSchema';
-import { productsTable } from './productsSchema';
+import { usersTable } from './usersSchema.js';
+import { productsTable } from './productsSchema.js';
 import { createInsertSchema } from 'drizzle-zod';
 import { z } from 'zod';
 
