@@ -1,16 +1,21 @@
 import { Request, Response, NextFunction } from 'express';
 import _ from 'lodash';
-import { z, ZodError } from 'zod';
+import { z, ZodError, ZodTypeAny } from 'zod';
 
-export function validateData(schema: z.ZodObject<any, any>) {
+export function validateData<T extends ZodTypeAny>(schema: T) {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
       schema.parse(req.body);
-      req.cleanBody = _.pick(req.body, Object.keys(schema.shape));
+      // If schema is a ZodObject, use its shape keys for picking
+      if (schema instanceof z.ZodObject) {
+        req.cleanBody = _.pick(req.body, Object.keys(schema.shape));
+      } else {
+        req.cleanBody = req.body;
+      }
       next();
     } catch (error) {
       if (error instanceof ZodError) {
-        const errorMessages = error.errors.map((issue: any) => ({
+        const errorMessages = error.errors.map((issue) => ({
           message: `${issue.path.join('.')} is ${issue.message}`,
         }));
         res.status(400).json({ error: 'Invalid data', details: errorMessages });
