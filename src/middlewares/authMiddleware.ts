@@ -16,7 +16,7 @@ export function verifyToken(req: Request, res: Response, next: NextFunction) {
     console.log('Token received:', token);
 
     // decode jwt token data
-    const decoded = jwt.verify(token, 'your-secret');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY as string);
     console.log('Decoded token:', decoded);
 
     if (typeof decoded !== 'object' || !decoded?.userId) {
